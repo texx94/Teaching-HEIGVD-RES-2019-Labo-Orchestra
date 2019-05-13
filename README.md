@@ -107,13 +107,13 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
 | | *Insert your diagram here...* |
 |Question | Who is going to **send UDP datagrams** and **when**? |
-| | *Enter your response here...* |
+| | Tous les musiciens et chaque secondes. |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
-| | *Enter your response here...* |
+| | L'auditeur, il actualisera une liste de musicien contenant toutes les informations (ID, instrument, date dernière action, ...) |
 |Question | What **payload** should we put in the UDP datagrams? |
-| | *Enter your response here...* |
+| | Un ID du musicien, son instrument et son son.                |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
-| | *Enter your response here...* |
+| | Je pense utiliser les ```Map```. Celles-ci seront envoyées après un formatage JSON. <br />Dans l'auditeur, la map sera mis à jour en fonction des uuid des musiciens actifs et leur date de dernière action. |
 
 
 ## Task 2: implement a "musician" Node.js application
@@ -121,21 +121,21 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | In a JavaScript program, if we have an object, how can we **serialize it in JSON**? |
-| | *Enter your response here...*  |
+| | Avec l'instruction suivante ```JSON.stringify(music);``` |
 |Question | What is **npm**?  |
-| | *Enter your response here...*  |
+| | NPM est un gestionnaire de paquets. On peut l'apparenter à Maven dans les grandes lignes. C'est lui qui s'occupe de gérer le projet JS. |
 |Question | What is the `npm install` command and what is the purpose of the `--save` flag?  |
-| | *Enter your response here...*  |
+| | La commande ```npm install``` permet d'ajouter un paquet, l'option ```--save``` permet d'ajouter ce paquet à l'arborescence des dépendances. |
 |Question | How can we use the `https://www.npmjs.com/` web site?  |
-| | *Enter your response here...*  |
+| | Ce site est semblable à Docker Hub, il permet de rechercher des paquets et leur documentation. Il donne aussi les commandes pour l'installer. |
 |Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122? |
-| | *Enter your response here...*  |
+|  | Grâce au paquet ```uuid```. J'ai utilisé la fonction ```uuidv4``` car elle propose un ID aléatoire. |
 |Question | In Node.js, how can we execute a function on a **periodic** basis? |
-| | *Enter your response here...*  |
+|  | Avec l'instruction ```setInterval(this.play.bind(this), 1000);``` |
 |Question | In Node.js, how can we **emit UDP datagrams**? |
-| | *Enter your response here...*  |
+| | Grâce au paquet dgram et un socket UDP. La méthode ```send``` fait le reste. |
 |Question | In Node.js, how can we **access the command line arguments**? |
-| | *Enter your response here...*  |
+|  | De cette manière ```const instrument = process.argv[2];```   |
 
 
 ## Task 3: package the "musician" app in a Docker image
@@ -143,17 +143,17 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we **define and build our own Docker image**?|
-| | *Enter your response here...*  |
+| | ```docker build -t res/musician .``` |
 |Question | How can we use the `ENTRYPOINT` statement in our Dockerfile?  |
-| | *Enter your response here...*  |
+| | On l'utilise afin de lancer la commande ```node musician.js```. Concrètement la commande est ```ENTRYPOINT ["node", "/opt/app/musician.js"]``` |
 |Question | After building our Docker image, how do we use it to **run containers**?  |
-| | *Enter your response here...*  |
+| | ```docker run -d -p 2205:2205 res/musician``` |
 |Question | How do we get the list of all **running containers**?  |
-| | *Enter your response here...*  |
+| | ```docker ps``` |
 |Question | How do we **stop/kill** one running container?  |
-| | *Enter your response here...*  |
+| | ```docker kill <name_of_container>``` |
 |Question | How can we check that our running containers are effectively sending UDP datagrams?  |
-| | *Enter your response here...*  |
+| | On peut utiliser un sniffer tel que WireShark |
 
 
 ## Task 4: implement an "auditor" Node.js application
@@ -161,15 +161,15 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | ---  |
 |Question | With Node.js, how can we listen for UDP datagrams in a multicast group? |
-| | *Enter your response here...*  |
+| | ```socket.bind(protocol.PROTOCOL_PORT, () => {console.log('Joining multicast group');socket.addMembership(protocol.PROTOCOL_MULTICAST_ADDRESS);});``` |
 |Question | How can we use the `Map` built-in object introduced in ECMAScript 6 to implement a **dictionary**?  |
-| | *Enter your response here...* |
+| | A l'aide de l'id de chaque musicien, nous pouvons créer une map utilisant l'id comme clé et un objet composé comme valeur. |
 |Question | How can we use the `Moment.js` npm module to help us with **date manipulations** and formatting?  |
-| | *Enter your response here...* |
+| | ```moment.js``` propose des méthodes qui donnent la date actuelle ```moment().toISOString()``` et une méthode de différence entre deux dates ```moment().diff(value.lastSound, 'seconds') > 5``` |
 |Question | When and how do we **get rid of inactive players**?  |
-| | *Enter your response here...* |
+| | Avec la méthode présentée ci-dessus et la méthode ```delete``` proposée par ```Map``` |
 |Question | How do I implement a **simple TCP server** in Node.js?  |
-| | *Enter your response here...* |
+|  | Avec le paquet ```net``` et les commandes suivante : <br /> ```const TCPServ = net.createServer();<br/>TCPServ.listen(protocol.PROTOCOL_PORT);``` |
 
 
 ## Task 5: package the "auditor" app in a Docker image
@@ -177,8 +177,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we validate that the whole system works, once we have built our Docker image? |
-| | *Enter your response here...* |
-
+|   | Commencer par lancer l'auditeur et deux musiciens. Faire une requête TCP et voir que les deux musiciens sont dans la liste reçue. Supprimer un musicien et refaire la requête TCP **immédiatement (max 5s)** et voir que les deux musiciens sont encore là. Attendre quelques secondes (environ 7s), refaire la requête TCP et voir que le musiciens arrêté émet plus de son. |
 
 ## Constraints
 
